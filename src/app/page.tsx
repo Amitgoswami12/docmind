@@ -1,103 +1,118 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getSessionUserId } from "@/lib/auth";
+import { DemoButton } from "@/components/DemoButton";
 
-export default function Home() {
+const FEATURES = [
+  {
+    title: "Answers with sources",
+    body: "Every claim links to the document and page it came from, so you can check it in one click.",
+  },
+  {
+    title: "Streams in real time",
+    body: "Answers appear word by word over Server-Sent Events. No waiting for a spinner.",
+  },
+  {
+    title: "Agent with tools",
+    body: "The model decides when to search, list files or summarize a whole document, and can search more than once.",
+  },
+  {
+    title: "Private workspaces",
+    body: "Group documents by project. Each workspace has its own files, chats and vector index.",
+  },
+];
+
+const STEPS = [
+  ["Upload", "PDF, Markdown or text up to 10 MB"],
+  ["Index", "Split into chunks, embedded, stored in pgvector"],
+  ["Ask", "Semantic search finds the right passages"],
+  ["Answer", "GPT streams a cited answer"],
+];
+
+export default async function Home() {
+  let signedIn = false;
+  try {
+    signedIn = Boolean(await getSessionUserId());
+  } catch {
+    signedIn = false;
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+    <main className="min-h-screen">
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5">
+        <span className="text-lg font-bold tracking-tight">
+          Doc<span className="text-emerald-500">Mind</span>
+        </span>
+        <div className="flex items-center gap-3 text-sm">
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="https://github.com/Amitgoswami12/docmind"
+            className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+            GitHub
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          {signedIn ? (
+            <Link href="/workspace" className="rounded-lg bg-zinc-900 px-3 py-1.5 font-medium text-white dark:bg-white dark:text-zinc-900">
+              Open app
+            </Link>
+          ) : (
+            <Link href="/login" className="rounded-lg border border-zinc-300 px-3 py-1.5 font-medium dark:border-zinc-700">
+              Sign in
+            </Link>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
+      </nav>
+
+      <section className="mx-auto max-w-5xl px-5 pb-16 pt-14 sm:pt-24">
+        <p className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+          RAG · Next.js · OpenAI · pgvector
+        </p>
+        <h1 className="mt-5 max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+          Ask your documents anything. <span className="text-emerald-500">Get answers you can check.</span>
+        </h1>
+        <p className="mt-5 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
+          Upload PDFs and notes, ask questions in plain English, and get streamed answers that cite the exact page
+          they came from.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <DemoButton />
+          <Link
+            href={signedIn ? "/workspace" : "/register"}
+            className="rounded-xl border border-zinc-300 px-5 py-3 font-semibold transition hover:-translate-y-0.5 dark:border-zinc-700"
+          >
+            {signedIn ? "Open your workspace" : "Create a free account"}
+          </Link>
+        </div>
+        <p className="mt-3 text-sm text-zinc-500">The demo needs no sign-up and comes with a sample employee handbook.</p>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 pb-16">
+        <div className="grid gap-3 sm:grid-cols-4">
+          {STEPS.map(([title, body], i) => (
+            <div key={title} className="rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+              <div className="font-mono text-xs text-emerald-500">0{i + 1}</div>
+              <div className="mt-1 font-semibold">{title}</div>
+              <div className="mt-1 text-sm text-zinc-500">{body}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 pb-24">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {FEATURES.map((f) => (
+            <div key={f.title} className="rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+              <h3 className="font-semibold">{f.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer className="border-t border-zinc-200 py-6 text-center text-sm text-zinc-500 dark:border-zinc-800">
+        Built by{" "}
+        <a href="https://amitgoswami12.github.io" className="underline underline-offset-2">
+          Amit Goswami
         </a>
       </footer>
-    </div>
+    </main>
   );
 }
